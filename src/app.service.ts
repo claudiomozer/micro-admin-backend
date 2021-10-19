@@ -27,5 +27,36 @@ export class AppService
       }
   }
 
+  async consultarTodasCategorias (): Promise<Categoria[]>
+  {
+      try {
+        return await this.categoriaModel.find().populate("jogadores").exec();
+      } catch (err) {
+        this.logger.error(`Error: ${JSON.stringify(err.message)}`);
+        throw new RpcException(err.message);
+      }
+  }
+
+  async consultarCategoriaPeloId (categoria: string) : Promise<Categoria>
+  {
+    try {
+      return await this.buscaPeloIdOuExcessao(categoria);
+    } catch (err) {
+      this.logger.error(`Error: ${JSON.stringify(err.message)}`);
+      throw new RpcException(err.message);
+    }
+  }
+
+  private async buscaPeloIdOuExcessao(categoria: string): Promise<Categoria>
+  {
+      const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
+      
+      if(!categoriaEncontrada) {
+          throw new NotFoundException(`Categoria ${categoria} não encontrada!`);
+      }
+
+      return categoriaEncontrada;
+  }
+
 
 }

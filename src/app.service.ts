@@ -27,6 +27,16 @@ export class AppService
       }
   }
 
+  async atualizarCategoria (id: string, categoria: Categoria): Promise<void>
+  {
+     try {
+        await this.categoriaModel.findOneAndUpdate({ categoria: id }, { $set: categoria }).exec();
+      } catch (error) {
+        this.logger.error(`error: ${JSON.stringify(error.message)}`);
+        throw new RpcException(error.message);
+      }
+  }
+
   async consultarTodasCategorias (): Promise<Categoria[]>
   {
       try {

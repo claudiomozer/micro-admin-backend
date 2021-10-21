@@ -1,5 +1,6 @@
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { channel } from 'diagnostics_channel';
 import { ADDRGETNETWORKPARAMS } from 'dns';
 import { AppService } from './app.service';
 import { Categoria } from './interfaces/categorias/categoria,interface';
@@ -29,20 +30,54 @@ export class AppController
       await channel.ack(originalMessage);
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
-      ackErrors.map( async ackError => {
-        if (error.message.includes(ackError)) {
-          await channel.ack(originalMessage);
-        }
+      const filteredError = ackErrors.filter(async ackError => {
+        return error.message.includes(ackError);
       })
+
+      if (filteredError) {
+        await channel.ack(originalMessage);
+      }
     }
   }
 
   // Responder, vai devolver algo para o client
   @MessagePattern('consultar-categorias')
-  async consultarCategorias (@Payload() id: string) {
-    if (id) {
-      return this.appService.consultarCategoriaPeloId(id);
+  async consultarCategorias (
+    @Payload() id: string,
+    @Ctx() context: RmqContext
+  ) {
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      if (id) {
+        return await this.appService.consultarCategoriaPeloId(id);
+      }
+      return await this.appService.consultarTodasCategorias();
+    } finally {
+      channel.ack(originalMessage);
     }
-    return this.appService.consultarTodasCategorias();
   }
+
+   @EventPattern('atualizar-categoria')
+   async atualizarCategoria(@Payload() data: any, @Ctx() context: RmqContext)
+   {
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      const { id, categoria } = data;
+
+      await this.appService.atualizarCategoria(id, categoria);
+      await channel.ack(originalMessage);
+    } catch(error) {
+      const filteredError = ackErrors.filter(async ackError => {
+        return error.message.includes(ackError);
+      })
+
+      if (filteredError) {
+        await channel.ack(originalMessage);
+      } 
+    }
+   }
 }

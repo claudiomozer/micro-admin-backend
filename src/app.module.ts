@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategoriaSchema } from './interfaces/categorias/categoria.schema';
+import { CategoriaSchema } from './categorias/interfaces/categoria.schema';
 import { JogadorSchema } from './interfaces/jogadores/jogador.schema';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { CategoriasModule } from './categorias/categorias.module';
 
 var connectionParams : object = {
   useNewUrlParser: true,
@@ -24,9 +23,10 @@ var connectionParams : object = {
     MongooseModule.forFeature([
       { name: 'Categoria', schema: CategoriaSchema },
       { name: 'Jogador', schema: JogadorSchema }
-    ])
+    ]),
+    CategoriasModule
   ],
-  controllers: [AppController],
-  providers: [AppService]
+  controllers: [],
+  providers: []
 })
 export class AppModule {}

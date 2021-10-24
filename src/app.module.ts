@@ -4,6 +4,7 @@ import { CategoriaSchema } from './categorias/interfaces/categoria.schema';
 import { JogadorSchema } from './jogadores/interfaces/jogador.schema';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriasModule } from './categorias/categorias.module';
+import { JogadoresModule } from './jogadores/jogadores.module';
 
 var connectionParams : object = {
   useNewUrlParser: true,
@@ -24,7 +25,8 @@ var connectionParams : object = {
       { name: 'Categoria', schema: CategoriaSchema },
       { name: 'Jogador', schema: JogadorSchema }
     ]),
-    CategoriasModule
+    CategoriasModule,
+    JogadoresModule
   ],
   controllers: [],
   providers: []

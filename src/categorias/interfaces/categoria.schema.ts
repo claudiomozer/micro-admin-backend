@@ -9,9 +9,5 @@ export const CategoriaSchema = new mongoose.Schema({
             operacao: String,
             valor: Number
         }
-    ],
-    jogadores: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Jogador"
-    }]
+    ]
 }, {timestamps: true, collection: 'categorias'});

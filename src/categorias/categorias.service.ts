@@ -39,7 +39,7 @@ export class CategoriasService {
     async consultarTodasCategorias (): Promise<Categoria[]>
     {
         try {
-          return await this.categoriaModel.find().populate("jogadores").exec();
+          return await this.categoriaModel.find().exec();
         } catch (err) {
           this.logger.error(`Error: ${JSON.stringify(err.message)}`);
           throw new RpcException(err.message);

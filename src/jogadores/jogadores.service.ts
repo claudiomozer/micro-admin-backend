@@ -69,6 +69,17 @@ export class JogadoresService {
         }
     }
 
+    public async jogadoresOfIds(ids: string[]): Promise<Jogador[]>
+    {
+        const jogadoresEncontrados = await this.jogadorModel.where('_id').in(ids).exec();
+        
+        if(jogadoresEncontrados.length === 0) {
+            throw new NotFoundException(`Nenhum dos jogadores informados foi encontrado`);
+        }
+
+        return jogadoresEncontrados;
+    }
+
     private async buscaPeloIdOuExcessao(id: string): Promise<Jogador>
     {
         const jogadorEncontrado = await this.jogadorModel.findOne({_id: id}).exec();

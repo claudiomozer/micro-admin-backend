@@ -56,6 +56,22 @@ export class JogadoresController {
             channel.ack(originalMessage);
         }
     }
+
+    @MessagePattern('consultar-jogadores-ids')
+    async jogadoresOfIds(
+        @Payload() ids: string[],
+        @Ctx() context: RmqContext
+    ) {
+        const channel = context.getChannelRef();
+        const originalMessage = context.getMessage();
+
+        try {
+            return await this.jogadoresService.jogadoresOfIds(ids);
+        } finally {
+            channel.ack(originalMessage);
+        }
+
+    }
       
     @EventPattern('atualizar-jogador')
     async atualizarJogador(@Payload() data: any, @Ctx() context: RmqContext)

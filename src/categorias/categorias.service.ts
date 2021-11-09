@@ -58,7 +58,7 @@ export class CategoriasService {
   
     private async buscaPeloIdOuExcessao(categoria: string): Promise<Categoria>
     {
-        const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
+        const categoriaEncontrada = await this.categoriaModel.findOne({_id: categoria}).exec();
         
         if(!categoriaEncontrada) {
             throw new NotFoundException(`Categoria ${categoria} não encontrada!`);
